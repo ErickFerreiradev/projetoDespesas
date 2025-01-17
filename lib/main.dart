@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'models/transaction.dart';
+import 'package:intl/intl.dart';
 
 main() => runApp(const ExpensesApp());
 
@@ -33,9 +34,9 @@ class MyHomePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Despesas Pessoais'),
+        backgroundColor: Colors.blue,
       ),
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           const SizedBox(
@@ -57,13 +58,13 @@ class MyHomePage extends StatelessWidget {
                       ),
                       decoration: BoxDecoration(
                         border: Border.all(
-                          color: Colors.green,
+                          color: const Color.fromARGB(255, 190, 248, 192),
                           width: 2,
                         )
                       ),
                       padding: EdgeInsets.all(10),
                       child: Text(
-                        tr.value.toString(),
+                        'R\$ ' + tr.value.toStringAsFixed(2),
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 20,
@@ -72,9 +73,22 @@ class MyHomePage extends StatelessWidget {
                       ),
                     ),
                     Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(tr.title),
-                        Text(tr.date.toString()),
+                        Text(
+                          tr.title,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+
+                          )
+                          ),
+                        Text(
+                          DateFormat('d MMM y').format(tr.date),
+                          style: TextStyle(
+                            color: const Color.fromARGB(255, 82, 82, 82),
+                          )
+                        ),
                       ],
                     ),
                   ],
@@ -82,6 +96,26 @@ class MyHomePage extends StatelessWidget {
               );
             }).toList(),
           ),
+          Card(
+            elevation: 5,
+            child: Padding(
+              padding: const EdgeInsets.all(10),
+              child: Column(
+                children: [
+                  TextField(
+                    decoration: InputDecoration(
+                      labelText: 'Título',
+                    ),
+                  ),
+                  TextField(
+                    decoration: InputDecoration(
+                      labelText: 'Valor (R\$)',
+                  ),
+                  ),
+                ],
+              ),
+            )
+          )
         ],
       ),
     );
