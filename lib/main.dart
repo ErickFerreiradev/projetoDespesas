@@ -7,14 +7,28 @@ import 'package:expenses/components/transaction_form.dart';
 import 'package:expenses/components/transaction_list.dart';
 import '../models/transaction.dart';
 
-main() => runApp(const ExpensesApp());
+main() => runApp(ExpensesApp());
 
 class ExpensesApp extends StatelessWidget {
-  const ExpensesApp({Key? key}) : super(key: key);
+  ExpensesApp({Key? key}) : super(key: key);
+  final ThemeData tema = ThemeData();
+  
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: MyHomePage(),
+      theme: ThemeData(
+        useMaterial3: false,
+        appBarTheme: AppBarTheme(
+          backgroundColor: Colors.purple,
+          foregroundColor: Colors.white,
+        ),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color.fromARGB(255, 84, 129, 86),
+          primary: Colors.green,
+          secondary: const Color.fromARGB(255, 47, 117, 49),
+        ),
+      ),
     );
   }
 }
@@ -79,7 +93,7 @@ class _MyHomePageState extends State<MyHomePage> {
             onPressed: () => _opentransactionFormModal(context),
             ),
         ],
-        backgroundColor: const Color.fromARGB(255, 47, 117, 49),
+        backgroundColor: Theme.of(context).colorScheme.secondary,
       ),
       body: SingleChildScrollView(
         child: Column(
