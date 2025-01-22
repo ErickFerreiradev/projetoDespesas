@@ -22,16 +22,30 @@ class ExpensesApp extends StatelessWidget {
         appBarTheme: AppBarTheme(
           backgroundColor: Colors.purple,
           foregroundColor: Colors.white,
+          titleTextStyle: TextStyle(
+            fontFamily: 'OpenSans',
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color.fromARGB(255, 84, 129, 86),
           primary: Colors.green,
           secondary: const Color.fromARGB(255, 47, 117, 49),
         ),
+        textTheme: tema.textTheme.copyWith(
+          titleLarge: const TextStyle(
+            fontFamily: 'OpenSans',
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ),
       ),
     );
   }
 }
+          
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key? key}) : super(key: key);
