@@ -28,6 +28,10 @@ class ExpensesApp extends StatelessWidget {
             fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
+          iconTheme: IconThemeData(
+            color: Colors.white,
+            
+          ),
         ),
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color.fromARGB(255, 84, 129, 86),
