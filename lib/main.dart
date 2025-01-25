@@ -95,14 +95,6 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  choseRemove(BuildContext context) {
-    showModalBottomSheet(
-      context: context, 
-      builder: (_) {
-        return Text('oi');
-      }
-      );
-  }
 
   _opentransactionFormModal(BuildContext context) {
     showModalBottomSheet(
