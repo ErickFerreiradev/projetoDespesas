@@ -1,5 +1,6 @@
 import 'package:expenses/components/transaction_form.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'models/transaction.dart';
 import 'package:intl/intl.dart';
 import 'dart:math';
@@ -16,6 +17,7 @@ class ExpensesApp extends StatelessWidget {
   
   @override
   Widget build(BuildContext context) {
+
     return MaterialApp(
       home: MyHomePage(),
       theme: ThemeData(
@@ -62,6 +64,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
 
   final List <Transaction> _transactions = [];
+  bool _showChart = false;
 
   List<Transaction> get _recentTransactions {
     return _transactions.where((tr) {
@@ -107,8 +110,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
+    final appBar = AppBar(
         title: const Text('Despesas Pessoais'),
         actions: [
           IconButton(
@@ -117,13 +119,39 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
         ],
         backgroundColor: Theme.of(context).colorScheme.secondary,
-      ),
+      );
+    final availableHeight = MediaQuery.of(context).size.height - appBar.preferredSize.height - MediaQuery.of(context).padding.top;
+
+    return Scaffold(
+      appBar: appBar,
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Chart(_recentTransactions),
-              TransactionList(_transactions, _removeTransaction),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('Exibir gráfico'),
+                Switch(
+                  value: _showChart,
+                  onChanged: (value) {
+                    setState(() {
+                      _showChart = value;
+                    });
+                  },
+                  ),
+              ],
+            ),
+            if(_showChart)
+            Container(
+              height: availableHeight * 0.25,
+              child: Chart(_recentTransactions),
+              ),
+            if(!_showChart)
+              Container(
+                height: availableHeight * 0.75,
+                child: TransactionList(_transactions, _removeTransaction),
+              ),
           ],
         ),
       ),
