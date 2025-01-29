@@ -25,7 +25,7 @@ class ExpensesApp extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: false,
         appBarTheme: AppBarTheme(
-          backgroundColor: Colors.purple,
+          backgroundColor: const Color.fromARGB(255, 47, 117, 49),
           foregroundColor: Colors.white,
           titleTextStyle: TextStyle(
             fontFamily: 'OpenSans',
@@ -110,25 +110,34 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  Widget _getIconButton(IconData icon, Function() fn) {
+    return Platform.isIOS
+        ? GestureDetector(onTap: fn, child: Icon(icon))
+        : IconButton(icon: Icon(icon), onPressed: fn);
+  }
+
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
     bool isLandscape = 
     MediaQuery.of(context).orientation == Orientation.landscape;
 
+    final iconList = Platform.isIOS ? CupertinoIcons.refresh : Icons.list;
+    final chartList = Platform.isIOS ? CupertinoIcons.refresh : Icons.show_chart;
+
     final actions = [
           if(isLandscape)
-           IconButton(
-            icon: Icon(_showChart ? Icons.list : Icons.show_chart),
-            onPressed: () {
+           _getIconButton(
+            _showChart ? iconList : chartList,
+            () {
               setState(() {
                 _showChart = !_showChart;
               });
             },
             ),
-          IconButton(
-            icon: Icon(Icons.add),
-            onPressed: () => _opentransactionFormModal(context),
+          _getIconButton(
+            Platform.isIOS ? CupertinoIcons.add : Icons.add,
+            () => _opentransactionFormModal(context),
             ),
         ];
 
@@ -137,35 +146,38 @@ class _MyHomePageState extends State<MyHomePage> {
       actions: actions,
     ); 
     
-    AppBar(
-        title: const Text('Despesas Pessoais'),
-        actions: actions,
-        backgroundColor: Theme.of(context).colorScheme.secondary,
-      );
     final availableHeight = mediaQuery.size.height - appBar.preferredSize.height - mediaQuery.padding.top;
 
-    final bodyPage = SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            if(_showChart || !isLandscape )
-            Container(
-              height: availableHeight * (isLandscape ? 0.8 : 0.3),
-              child: Chart(_recentTransactions),
-              ),
-            if(!_showChart || !isLandscape)
+    final bodyPage = SafeArea(
+      child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              if(_showChart || !isLandscape )
               Container(
-                height: availableHeight * (isLandscape ? 1 : 0.7),
-                child: TransactionList(_transactions, _removeTransaction),
-              ),
-          ],
+                height: availableHeight * (isLandscape ? 0.8 : 0.3),
+                child: Chart(_recentTransactions),
+                ),
+              if(!_showChart || !isLandscape)
+                Container(
+                  height: availableHeight * (isLandscape ? 1 : 0.7),
+                  child: TransactionList(_transactions, _removeTransaction),
+                ),
+            ],
+          ),
         ),
-      );
+    );
 
-    return Platform.isIOS ? CupertinoPageScaffold(
-
-      child: bodyPage,
-      ) 
+  return Platform.isIOS ? CupertinoPageScaffold(
+            navigationBar: CupertinoNavigationBar(
+              middle: const Text('Despesas Pessoais'),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: actions,
+              ),
+            ),
+            child: bodyPage,
+          ) 
      : Scaffold(
       appBar: appBar,
       body: bodyPage,
