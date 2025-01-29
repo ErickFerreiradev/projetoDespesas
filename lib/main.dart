@@ -1,9 +1,11 @@
+import 'dart:math';
+import 'dart:io';
 import 'package:expenses/components/transaction_form.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'models/transaction.dart';
 import 'package:intl/intl.dart';
-import 'dart:math';
 import 'package:expenses/components/transaction_form.dart';
 import 'package:expenses/components/transaction_list.dart';
 import '../models/transaction.dart';
@@ -110,52 +112,65 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final appBar = AppBar(
-        title: const Text('Despesas Pessoais'),
-        actions: [
+    final mediaQuery = MediaQuery.of(context);
+    bool isLandscape = 
+    MediaQuery.of(context).orientation == Orientation.landscape;
+
+    final actions = [
+          if(isLandscape)
+           IconButton(
+            icon: Icon(_showChart ? Icons.list : Icons.show_chart),
+            onPressed: () {
+              setState(() {
+                _showChart = !_showChart;
+              });
+            },
+            ),
           IconButton(
             icon: Icon(Icons.add),
             onPressed: () => _opentransactionFormModal(context),
             ),
-        ],
+        ];
+
+    final PreferredSizeWidget appBar = AppBar(
+      title: const Text('Despesas Pessoais'),
+      actions: actions,
+    ); 
+    
+    AppBar(
+        title: const Text('Despesas Pessoais'),
+        actions: actions,
         backgroundColor: Theme.of(context).colorScheme.secondary,
       );
-    final availableHeight = MediaQuery.of(context).size.height - appBar.preferredSize.height - MediaQuery.of(context).padding.top;
+    final availableHeight = mediaQuery.size.height - appBar.preferredSize.height - mediaQuery.padding.top;
 
-    return Scaffold(
-      appBar: appBar,
-      body: SingleChildScrollView(
+    final bodyPage = SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text('Exibir gráfico'),
-                Switch(
-                  value: _showChart,
-                  onChanged: (value) {
-                    setState(() {
-                      _showChart = value;
-                    });
-                  },
-                  ),
-              ],
-            ),
-            if(_showChart)
+            if(_showChart || !isLandscape )
             Container(
-              height: availableHeight * 0.25,
+              height: availableHeight * (isLandscape ? 0.8 : 0.3),
               child: Chart(_recentTransactions),
               ),
-            if(!_showChart)
+            if(!_showChart || !isLandscape)
               Container(
-                height: availableHeight * 0.75,
+                height: availableHeight * (isLandscape ? 1 : 0.7),
                 child: TransactionList(_transactions, _removeTransaction),
               ),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
+      );
+
+    return Platform.isIOS ? CupertinoPageScaffold(
+
+      child: bodyPage,
+      ) 
+     : Scaffold(
+      appBar: appBar,
+      body: bodyPage,
+      floatingActionButton: Platform.isIOS ? Container () 
+      : FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () =>  _opentransactionFormModal(context),
       ),
